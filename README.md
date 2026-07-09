@@ -35,11 +35,11 @@ This project features a clean, single-user testing environment equipped with sim
 
 ---
 
-## ⚙️ Installation & Local Setup
+---
 
-Follow these steps to run the platform locally on your machine:
+## 🌐 Live Deployment
 
-1. **Clone the Repository**
-   ```bash
-   git clone [https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git](https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git)
-   cd YOUR_REPO_NAME
+🚀 **Try the Live Demo:**
+(https://care-flow-lyart.vercel.app/)
+
+---
