@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Care.xyz - On-Demand Home Care Services Platform
 
-## Getting Started
+Care.xyz is a responsive, full-stack web application built using **Next.js (App Router)** and **MongoDB**. The platform allows users to book customized, professional home care services—ranging from baby care and babysitting to elderly support and sick patient care—across major structural areas in Dhaka and Chattogram.
 
-First, run the development server:
+This project features a clean, single-user testing environment equipped with simulation controls to bypass complex administrative hierarchies, making it incredibly easy to test state lifecycles dynamically.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Core Features
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **Hierarchical Location Routing:** Dynamic selection matching Division ➔ District ➔ City ➔ Area constraints.
+- **Dynamic Matrix Pricing:** Live calculation fields computed via client state mechanisms before booking persistence.
+- **Interactive Care Ledger:** A clean layout displaying all user bookings without horizontal layout crowding.
+- **Built-in Workflow Simulator:** Real-time state advancement pipeline controls directly inside the user canvas to transitions statuses easily: `Pending` ➔ `Confirmed` ➔ `Completed` ➔ `Cancelled`.
+- **Fully Responsive Interface:** Seamlessly transitions between a data-dense grid view on desktop screens to mobile card stacks.
+- **Persistent Server Actions:** Status transitions and cancellations are directly committed to MongoDB Atlas and survive browser reloads.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠️ Tech Stack & Architecture
 
-To learn more about Next.js, take a look at the following resources:
+- **Framework:** Next.js (React Server Components & Client Hooks)
+- **Styling:** Tailwind CSS (Responsive Design Engine)
+- **Database:** MongoDB Atlas (Mongoose ODM layer)
+- **State Management:** React Hooks (`useState`, `useEffect`) & React Context Layer
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📦 Operational Lifecycle States
 
-## Deploy on Vercel
+1.  🟡 **Pending:** Request is successfully logged in the database and sits in the assignment queue. Users retain cancellation privileges.
+2.  🔵 **Confirmed:** A simulated caregiver has been assigned to lock down the shift parameters.
+3.  🟢 **Completed:** Care duration is fulfilled, freezing the database index parameters.
+4.  🔴 **Cancelled:** User or admin safely flags the ledger entry as obsolete.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🌐 Live Deployment
+
+🚀 **Try the Live Demo:**
+https://care-flow-lyart.vercel.app/
+
+---
