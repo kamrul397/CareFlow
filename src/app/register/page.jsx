@@ -62,6 +62,7 @@ export default function RegisterPage() {
 
       // Dynamic redirect tracking
       setTimeout(() => {
+        router.refresh();
         router.push("/booking/baby-care");
       }, 1500);
     }

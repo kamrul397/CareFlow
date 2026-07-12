@@ -3,6 +3,7 @@
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers"; // Cookie utility import
 
 export async function registerUser(formData) {
   try {
@@ -30,7 +31,6 @@ export async function registerUser(formData) {
     }
 
     // 4. Secure Cryptographic Hashing
-    // Generates a secure salt and combines it with the plain text password so it can't be reverse-engineered
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -40,14 +40,34 @@ export async function registerUser(formData) {
       nid,
       email: email.toLowerCase(),
       contact,
-      password: hashedPassword, // Store the encrypted string, NOT the plain text password
+      password: hashedPassword,
     });
 
     await newUser.save();
 
     console.log(`👤 New User Registered Successfully in DB: ${email}`);
 
-    return { success: true };
+    // Create user object context data structure
+    const userData = {
+      id: newUser._id.toString(),
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role || "user",
+    };
+
+    // 6. Automatically log the user in immediately following registration
+    const cookieStore = await cookies();
+    cookieStore.set("session_user", JSON.stringify(userData), {
+      httpOnly: true, // Prevents client-side JS scripts from accessing it (Secure against XSS)
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // 1 Week lifespan
+      path: "/",
+    });
+
+    return {
+      success: true,
+      user: userData, // Returning user profile details back to the client matching login action standard
+    };
   } catch (error) {
     console.error("Registration server action error:", error);
     return {
@@ -78,15 +98,26 @@ export async function loginUser(formData) {
 
     console.log(`🔑 Real Login Verified Successfully for: ${user.email}`);
 
-    // Return user data back to the client component (omitting the password string for security)
+    const userData = {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+
+    // 4. Set the session cookie right BEFORE returning success
+    const cookieStore = await cookies();
+    cookieStore.set("session_user", JSON.stringify(userData), {
+      httpOnly: true, // Prevents client-side JS scripts from accessing it (Secure against XSS)
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // 1 Week lifespan
+      path: "/",
+    });
+
+    // Return sanitized data object structure
     return {
       success: true,
-      user: {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      user: userData,
     };
   } catch (error) {
     console.error("Login server action error:", error);
@@ -94,5 +125,19 @@ export async function loginUser(formData) {
       success: false,
       error: "Internal server error. Please try again later.",
     };
+  }
+}
+
+// 🌟 ADDED: LOGOUT ACTION TO AUTOMATICALLY WIPE COOKIES 🌟
+export async function logoutUser() {
+  try {
+    const cookieStore = await cookies();
+    // This tells the browser to instantly drop the cookie from storage
+    cookieStore.delete("session_user");
+    console.log("🚪 Session user cookie cleared safely from server.");
+    return { success: true };
+  } catch (error) {
+    console.error("Logout server action error:", error);
+    return { success: false, error: "Failed to log out correctly." };
   }
 }

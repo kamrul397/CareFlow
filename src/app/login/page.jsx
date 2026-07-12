@@ -50,6 +50,7 @@ export default function LoginPage() {
       setFormData({ email: "", password: "" });
 
       // Step B: Redirect them to check their existing bookings tracking ledger (view state will update immediately upon redirect)
+      router.refresh();
       router.push("/my-bookings");
     }
   };

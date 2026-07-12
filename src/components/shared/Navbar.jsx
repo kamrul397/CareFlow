@@ -1,12 +1,29 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { logoutUser } from "@/app/actions/auth"; // 🌟 Import the server action we just added!
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-// Import your central global state hook
 
 export default function Navbar() {
-  // Hook into your Auth Context: pull both the user data AND the logout function
   const { currentUser, logout } = useAuth();
+  const router = useRouter(); // 🌟 For refreshing the active layout state
+
+  const handleLogout = async () => {
+    try {
+      // 1. Fire the server action to drop the cookie securely
+      await logoutUser();
+
+      // 2. Clear the client React context (removes care_user from localStorage)
+      logout();
+
+      // 3. Force Next.js to re-evaluate the middleware state and route to login
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.error("Error during click logout execution:", error);
+    }
+  };
 
   return (
     <nav className="bg-white border-b border-gray-100 px-6 py-4 flex justify-between items-center shadow-sm">
@@ -27,20 +44,18 @@ export default function Navbar() {
 
         {currentUser ? (
           <>
-            {/* Displaying name pulled directly from the global context memory after a successful login lookup */}
             <span className="text-sm font-medium text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full">
               👋 Welcome, {currentUser.name}
             </span>
             <button
-              onClick={logout}
-              className="text-sm font-semibold text-red-500 hover:text-red-700"
+              onClick={handleLogout} // 🌟 Swapped 'logout' directly for our coordinated handler
+              className="text-sm font-semibold text-red-500 hover:text-red-700 cursor-pointer"
             >
               Log Out
             </button>
           </>
         ) : (
           <>
-            {/* Standard "Unauthenticated" links (shown to guests) */}
             <Link
               href="/login"
               className="text-sm text-gray-600 hover:text-blue-600"

@@ -1,6 +1,13 @@
+"use client";
+
 import Link from "next/link";
+// Step 1: Import your auth context hook to read app memory
+import { useAuth } from "@/context/AuthContext";
 
 export default function Hero() {
+  // Step 2: Extract currentUser from your global React context state
+  const { currentUser } = useAuth();
+
   return (
     <section className="relative bg-gradient-to-r from-blue-50 via-indigo-50 to-white overflow-hidden py-16 sm:py-24 lg:py-32">
       {/* Background decoration elements */}
@@ -36,12 +43,23 @@ export default function Hero() {
               >
                 Explore Services
               </Link>
-              <Link
-                href="/register"
-                className="bg-white text-gray-700 text-center px-8 py-3.5 rounded-xl font-semibold text-base border border-gray-200 hover:bg-gray-50 active:scale-95 transition shadow-sm"
-              >
-                Create Account
-              </Link>
+
+              {/* Step 3: Conditional Rendering Logic */}
+              {!currentUser ? (
+                <Link
+                  href="/register"
+                  className="bg-white text-gray-700 text-center px-8 py-3.5 rounded-xl font-semibold text-base border border-gray-200 hover:bg-gray-50 active:scale-95 transition shadow-sm"
+                >
+                  Create Account
+                </Link>
+              ) : (
+                <Link
+                  href="/my-bookings"
+                  className="bg-blue-50 text-blue-700 text-center px-8 py-3.5 rounded-xl font-bold text-base border border-blue-200 hover:bg-blue-100 active:scale-95 transition shadow-sm"
+                >
+                  Go to Dashboard →
+                </Link>
+              )}
             </div>
 
             {/* Quick trust metrics row */}
